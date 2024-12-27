@@ -17,20 +17,32 @@ def emotion_detector(text_to_analyze):
     # Parsing the JSON response from the API
     formatted_response = json.loads(response.text)
 
-    #Extracting set of emotions
-    anger = formatted_response['emotionPredictions'][0]["emotion"]["anger"]
-    disgust = formatted_response['emotionPredictions'][0]["emotion"]["disgust"]
-    fear = formatted_response['emotionPredictions'][0]["emotion"]["fear"]
-    joy = formatted_response['emotionPredictions'][0]["emotion"]["joy"]
-    sadness = formatted_response['emotionPredictions'][0]["emotion"]["sadness"]
+    # If the response status code is 400, extract the emotions
+    if response.status_code == 200:
+        anger = formatted_response['emotionPredictions'][0]["emotion"]["anger"]
+        disgust = formatted_response['emotionPredictions'][0]["emotion"]["disgust"]
+        fear = formatted_response['emotionPredictions'][0]["emotion"]["fear"]
+        joy = formatted_response['emotionPredictions'][0]["emotion"]["joy"]
+        sadness = formatted_response['emotionPredictions'][0]["emotion"]["sadness"]
 
-    #Creating a dictionary with the emotions
-    emotions = {"anger":anger, "disgust":disgust, "fear":fear,"joy":joy, "sadness": sadness}
+        #Creating a dictionary with the emotions
+        emotions = {"anger":anger, "disgust":disgust, "fear":fear,"joy":joy, "sadness": sadness}
 
-    #Find the highest key
-    max_key = max(emotions, key=emotions.get)
+        #Find the highest key
+        max_key = max(emotions, key=emotions.get)
 
-    #Append the dominant emotion
-    emotions["dominant_emotion"] = max_key
+        #Append the dominant emotion
+        emotions["dominant_emotion"] = max_key
+        
+    # If the response status code is 400, set emotions to none
+    elif response.status_code == 400:
+        anger = None
+        disgust = None
+        fear = None
+        joy = None
+        sadness = None
+        max_key = None
+        #Creating a dictionary with the emotions
+        emotions = {"anger":anger, "disgust":disgust, "fear":fear,"joy":joy, "sadness": sadness, "dominant_emotion": max_key}
 
     return emotions
